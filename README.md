@@ -1,6 +1,6 @@
 # GoB — CLO ↔ Blender Bridge
 
-**[한국어](README_ko.md) | [日本語](README_ja.md)**
+**[한국어](README_ko.md) | [日本語](README_jp.md)**
 
 > ⚠️ **Beta** — Currently CLO → Blender transfer is fully supported. Blender → CLO is in early development.
 
