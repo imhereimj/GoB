@@ -2,7 +2,7 @@
 
 **[English](README.md) | [日本語](README_ja.md)**
 
-> ⚠️ **Beta** — 현재 CLO → Blender 단방향 전송만 지원합니다.
+> ⚠️ **Beta** — 현재 CLO → Blender 전송은 안정적이나, Blender → CLO는 초기 개발 단계입니다.
 
 CLO에서 내보낸 3D 의상 데이터를 Blender로 빠르게 가져오는 브릿지 도구입니다.  
 텍스처(Diffuse, Normal, Roughness, Metalness, Opacity)를 자동으로 감지하여 Principled BSDF 셰이더에 연결하며, UDIM 텍스처도 지원합니다.
@@ -15,7 +15,7 @@ CLO에서 내보낸 3D 의상 데이터를 Blender로 빠르게 가져오는 브
 - ✅ CLO → Blender (OBJ + 텍스처 + UDIM)
 - ✅ 텍스처 파일명 기반 Auto-Shader 연결
 - ✅ 공유 폴더 자동 감시 (Auto-Import)
-- 🔜 Blender → CLO 양방향 안정화
+- ⚠️ Blender → CLO: 공유 폴더로 OBJ 추출 지원 (CLO 자동 임포트는 추후 지원 예정)
 - 🔜 FBX 포맷 지원
 
 버그 리포트나 제안은 [Issues](../../issues)에 남겨주세요.

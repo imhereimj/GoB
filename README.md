@@ -2,7 +2,7 @@
 
 **[한국어](README_ko.md) | [日本語](README_ja.md)**
 
-> ⚠️ **Beta** — Currently only CLO → Blender one-way transfer is supported.
+> ⚠️ **Beta** — Currently CLO → Blender transfer is fully supported. Blender → CLO is in early development.
 
 A bridge tool for quickly importing 3D garment data exported from CLO into Blender.  
 Automatically detects textures (Diffuse, Normal, Roughness, Metalness, Opacity) and connects them to Principled BSDF shader. UDIM textures are also supported.
@@ -15,7 +15,7 @@ We will continuously improve it through real-world usage.
 - ✅ CLO → Blender (OBJ + Textures + UDIM)
 - ✅ Auto-Shader based on texture filename keywords
 - ✅ Shared folder auto-watch (Auto-Import)
-- 🔜 Blender → CLO bidirectional stabilization
+- ⚠️ Blender → CLO: Manual export to shared folder (Automatic import in CLO is coming soon)
 - 🔜 FBX format support
 
 Bug reports and suggestions are welcome in [Issues](../../issues).
