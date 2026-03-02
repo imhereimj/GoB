@@ -441,7 +441,12 @@ class GOB_OT_open_folder(bpy.types.Operator):
 
         if folder and os.path.isdir(folder):
             import subprocess
-            subprocess.Popen(f'explorer "{folder}"')
+            import platform
+            
+            if platform.system() == "Darwin":  # macOS
+                subprocess.Popen(['open', folder])
+            else:  # Windows
+                subprocess.Popen(f'explorer "{folder}"')
             return {'FINISHED'}
 
         self.report({'ERROR'}, "[GoB] 폴더를 열 수 없습니다")

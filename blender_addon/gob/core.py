@@ -1,18 +1,19 @@
-"""
-GoB Core - shared folder management module.
-
-GoZ-style shared folder exchange: CLO <-> Blender.
-Shared folder: C:/Users/Public/GoB/
-Manifest: GoB_ObjectList.txt
-"""
-
 import os
+import platform
 from datetime import datetime
 
 
-# ── 상수 ──────────────────────────────────────────────
-# GoZ와 동일한 패턴의 공유 폴더 경로
-DEFAULT_GOB_PATH = os.path.join("C:\\Users\\Public", "GoB")
+# ── 버전 및 상수 ──────────────────────────────────────────
+VERSION = "0.2.0-beta"
+
+def get_default_gob_path():
+    """OS별 기본 GoB 공유 폴더 경로 반환."""
+    if platform.system() == "Darwin":  # macOS
+        return "/Users/Shared/GoB"
+    else:  # Windows
+        return os.path.join("C:\\Users\\Public", "GoB")
+
+DEFAULT_GOB_PATH = get_default_gob_path()
 MANIFEST_FILE = "GoB_ObjectList.txt"
 
 # 전송 방향 상수

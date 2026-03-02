@@ -1,4 +1,4 @@
-# GoB — CLO ↔ Blender Bridge
+# GoB — CLO ↔ Blender Bridge (v0.2.0 Beta)
 
 **[한국어](README_ko.md) | [日本語](README_jp.md)**
 
@@ -15,6 +15,7 @@ We will continuously improve it through real-world usage.
 - ✅ CLO → Blender (OBJ + Textures + UDIM)
 - ✅ Auto-Shader based on texture filename keywords
 - ✅ Shared folder auto-watch (Auto-Import)
+- ✅ **macOS Support (New)**
 - ⚠️ Blender → CLO: Manual export to shared folder (Automatic import in CLO is coming soon)
 - 🔜 FBX format support
 
@@ -27,26 +28,35 @@ Bug reports and suggestions are welcome in [Issues](../../issues).
 GoB exchanges files between CLO and Blender through a **shared folder**.  
 Please create the following folder before first use:
 
+### Windows:
 ```
 C:\Users\Public\GoB\
+```
+
+### macOS:
+```
+/Users/Shared/GoB/
 ```
 
 > 💡 The folder is auto-created when the script runs, but creating it beforehand is recommended to avoid permission issues.
 
 ---
 
-## Installation — Blender Add-on
+### Method 1: Install from ZIP (Recommended)
 
-1. Copy the `blender_addon/gob/` folder to Blender's addons path:
-   ```
-   %APPDATA%\Blender Foundation\Blender\<version>\scripts\addons\
-   ```
-   Example (Blender 5.0):
-   ```
-   C:\Users\<username>\AppData\Roaming\Blender Foundation\Blender\5.0\scripts\addons\gob\
-   ```
-2. Open Blender → **Edit → Preferences → Add-ons**
-3. Search `GoB` → Enable **GoB — CLO Bridge**
+1. Download the **`GoB_v0.2.0_Beta.zip`** (Full Package) from the [Releases](../../releases) page and unzip it.
+2. Select the **`gob/` folder inside `blender_addon/` and compress it back into a ZIP file** (e.g., `gob.zip`).
+3. Open Blender → **Edit → Preferences → Add-ons**
+4. Click the **Arrow/Gear icon** (or Install button) → **Install from Disk...**
+5. Select the newly created `gob.zip` and click **Install**.
+6. Search `GoB` → Enable **GoB — CLO Bridge**.
+
+### Method 2: Manual Installation (Folder Copy)
+
+1. Copy the `blender_addon/gob/` folder from the unzipped package to the following path:
+   - **Windows**: `%APPDATA%\Blender Foundation\Blender\<version>\scripts\addons\gob\`
+   - **macOS**: `~/Library/Application Support/Blender/<version>/scripts/addons/gob/`
+2. Open Blender → **Edit → Preferences → Add-ons** → Search `GoB` and enable it.
 
 ---
 
@@ -75,7 +85,7 @@ C:\Users\Public\GoB\
 
 1. Run `GoB_Send.py` in CLO Script Editor
 2. **Export Dialog** appears → Set scale, textures, UV, etc. and click OK
-3. OBJ + MTL + textures are automatically copied to `C:/Users/Public/GoB/`
+3. OBJ + MTL + textures are automatically copied to the **shared folder** (`C:/Users/Public/GoB/` or `/Users/Shared/GoB/`).
 4. Blender → 3D Viewport → N-key sidebar → **GoB** tab → **Get from CLO**
 
 ### Auto-Import
@@ -92,7 +102,6 @@ Toggle **Auto-Import** in the GoB panel → Objects are automatically imported w
 | Auto-Shader | Auto-connect textures to Principled BSDF based on filename |
 | UDIM Support | Auto-detect `name.1001.png` ~ `name.100N.png` patterns |
 | Auto-Import | Watch shared folder + auto import |
-| Drag & Drop | Drop `.zprj` files into Blender viewport |
 
 ## Texture Auto-Detection Keywords
 
@@ -108,7 +117,12 @@ Toggle **Auto-Import** in the GoB panel → Objects are automatically imported w
 
 ## Shared Folder
 
-Default path: `C:/Users/Public/GoB/`
+Default path:
+- **Windows**: `C:/Users/Public/GoB/`
+- **macOS**: `/Users/Shared/GoB/`
+
+> [!TIP]
+> This folder accumulates 3D data and textures every time you export. It is recommended to **periodically delete the contents** of this folder to save disk space.
 
 To change the path, update **both sides**:
 
@@ -119,9 +133,9 @@ To change the path, update **both sides**:
 
 ## Requirements
 
-- **Blender** 5.0+
-- **CLO** 2025+
-- **OS**: Windows
+- **Blender**: 5.0+ (Verified on Windows), 4.5+ (Verified on macOS Intel)
+- **CLO**: 2025+
+- **OS**: Windows / macOS
 
 ## Project Structure
 

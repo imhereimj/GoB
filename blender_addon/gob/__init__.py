@@ -8,16 +8,17 @@ Format: OBJ (Mesh + UV)
 
 bl_info = {
     "name": "GoB — CLO Bridge",
-    "author": "GoB Project",
-    "version": (1, 1, 0),
-    "blender": (5, 0, 0),
+    "author": "Jaeyong Lee",
+    "version": (0, 2, 0),
+    "blender": (3, 6, 0),
     "location": "View3D > Sidebar > GoB",
-    "description": "CLO <-> Blender mesh exchange bridge (GoZ-style)",
+    "description": "CLO <-> Blender mesh exchange bridge (v0.2.0 Beta with macOS support)",
     "category": "Import-Export",
 }
 
 import importlib
 from . import core
+VERSION = core.VERSION
 from . import preferences
 from . import operators
 from . import ui

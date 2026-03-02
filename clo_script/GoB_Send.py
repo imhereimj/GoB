@@ -11,14 +11,21 @@ CLO Script Editor에서 실행:
 
 import os
 import shutil
+import platform
 from datetime import datetime
 
 import export_api
 import utility_api
 
-# ── 설정 ──────────────────────────────────────────────
+# ── 설정 및 버전 ────────────────────────────────────────────
+VERSION = "0.2.0-beta"
 
-GOB_FOLDER = "C:/Users/Public/GoB"
+def get_default_folder():
+    if platform.system() == "Darwin": # macOS
+        return "/Users/Shared/GoB"
+    return "C:/Users/Public/GoB"
+
+GOB_FOLDER = get_default_folder()
 MANIFEST_FILE = "GoB_ObjectList.txt"
 
 

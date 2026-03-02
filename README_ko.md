@@ -1,4 +1,4 @@
-# GoB — CLO ↔ Blender Bridge
+# GoB — CLO ↔ Blender Bridge (v0.2.0 Beta)
 
 **[English](README.md) | [日本語](README_jp.md)**
 
@@ -15,6 +15,7 @@ CLO에서 내보낸 3D 의상 데이터를 Blender로 빠르게 가져오는 브
 - ✅ CLO → Blender (OBJ + 텍스처 + UDIM)
 - ✅ 텍스처 파일명 기반 Auto-Shader 연결
 - ✅ 공유 폴더 자동 감시 (Auto-Import)
+- ✅ **macOS 지원 추가**
 - ⚠️ Blender → CLO: 공유 폴더로 OBJ 추출 지원 (CLO 자동 임포트는 추후 지원 예정)
 - 🔜 FBX 포맷 지원
 
@@ -27,26 +28,35 @@ CLO에서 내보낸 3D 의상 데이터를 Blender로 빠르게 가져오는 브
 GoB는 **공유 폴더**를 통해 CLO와 Blender 간 파일을 교환합니다.  
 첫 사용 전에 아래 폴더를 생성해 주세요:
 
+### Windows:
 ```
 C:\Users\Public\GoB\
+```
+
+### macOS:
+```
+/Users/Shared/GoB/
 ```
 
 > 💡 스크립트 실행 시 자동 생성되지만, 권한 문제 방지를 위해 미리 만들어 두는 것을 권장합니다.
 
 ---
 
-## 설치 — Blender Add-on
+### 방법 1: ZIP 파일로 설치 (추천)
 
-1. `blender_addon/gob/` 폴더를 **통째로** 아래 경로에 복사합니다:
-   ```
-   %APPDATA%\Blender Foundation\Blender\<버전>\scripts\addons\
-   ```
-   예시 (Blender 5.0):
-   ```
-   C:\Users\<사용자명>\AppData\Roaming\Blender Foundation\Blender\5.0\scripts\addons\gob\
-   ```
-2. Blender 실행 → **Edit → Preferences → Add-ons**
-3. `GoB` 검색 → **GoB — CLO Bridge** 체크하여 활성화
+1. [Releases](../../releases) 페이지에서 **`GoB_v0.2.0_Beta.zip`** (전체 패키지) 파일을 다운로드하여 압축을 풉니다.
+2. `blender_addon/` 폴더 내의 **`gob/` 폴더만 선택하여 다시 ZIP으로 압축**합니다. (예: `gob.zip`)
+3. Blender 실행 → **Edit → Preferences → Add-ons**
+4. 우측 상단의 **화살표/톱니바퀴 아이콘** (또는 Install 버튼) 클릭 → **Install from Disk...** 선택
+5. 방금 만든 `gob.zip` 파일을 선택하고 **Install** 클릭
+6. `GoB` 검색 → **GoB — CLO Bridge** 체크하여 활성화
+
+### 방법 2: 수동 설치 (폴더 복사)
+
+1. 압축을 푼 패키지의 `blender_addon/gob/` 폴더를 아래 경로에 복사합니다:
+   - **Windows**: `%APPDATA%\Blender Foundation\Blender\<버전>\scripts\addons\gob\`
+   - **macOS**: `~/Library/Application Support/Blender/<버전>/scripts/addons/gob/`
+2. Blender 실행 → **Edit → Preferences → Add-ons** → **GoB** 검색 후 활성화
 
 ---
 
@@ -75,7 +85,7 @@ C:\Users\Public\GoB\
 
 1. CLO Script Editor에서 `GoB_Send.py` 실행
 2. **Export Dialog**가 표시됨 → 스케일, 텍스처, UV 등 원하는 설정 후 OK
-3. OBJ + MTL + 텍스처가 자동으로 `C:/Users/Public/GoB/` 폴더에 복사됨
+3. OBJ + MTL + 텍스처가 자동으로 **공유 폴더**(`C:/Users/Public/GoB/` 또는 `/Users/Shared/GoB/`)에 복사됨
 4. Blender → 3D Viewport → N키 사이드바 → **GoB** 탭 → **Get from CLO** 클릭
 
 ### Auto-Import
@@ -92,7 +102,6 @@ GoB 패널에서 **Auto-Import** 토글 → CLO에서 Export하면 자동으로 
 | Auto-Shader | 텍스처 파일명 기반 Principled BSDF 자동 연결 |
 | UDIM 지원 | `name.1001.png` ~ `name.100N.png` 패턴 자동 감지 |
 | Auto-Import | 공유 폴더 자동 감시 + 자동 Import |
-| Drag & Drop | `.zprj` 파일 Blender 뷰포트에 드롭 가능 |
 
 ## 텍스처 자동 감지 키워드
 
@@ -108,7 +117,12 @@ GoB 패널에서 **Auto-Import** 토글 → CLO에서 Export하면 자동으로 
 
 ## 공유 폴더
 
-기본 경로: `C:/Users/Public/GoB/`
+기본 경로:
+- **Windows**: `C:/Users/Public/GoB/`
+- **macOS**: `/Users/Shared/GoB/`
+
+> [!TIP]
+> 이 폴더에는 Export할 때마다 3D 데이터와 텍스처가 쌓이게 됩니다. 저장 공간 절약을 위해 **주기적으로 폴더 내부를 정리**해 주는 것을 권장합니다.
 
 경로를 변경하고 싶다면 **양쪽 모두** 맞춰줘야 합니다:
 
@@ -119,9 +133,28 @@ GoB 패널에서 **Auto-Import** 토글 → CLO에서 Export하면 자동으로 
 
 ## 요구사항
 
-- **Blender** 5.0+
-- **CLO** 2025+
-- **OS**: Windows
+- **Blender**: 5.0+ (Windows 확인), 4.5+ (macOS Intel 확인)
+- **CLO**: 2025+
+- **OS**: Windows / macOS
+
+## 프로젝트 구조
+
+```
+GoB/
+├── blender_addon/
+│   └── gob/              ← Blender Add-on
+│       ├── __init__.py
+│       ├── core.py
+│       ├── operators.py
+│       ├── preferences.py
+│       ├── ui.py
+│       └── watcher.py
+│
+├── clo_script/
+│   └── GoB_Send.py        ← CLO Script Editor
+│
+└── README.md
+```
 
 ## License
 
