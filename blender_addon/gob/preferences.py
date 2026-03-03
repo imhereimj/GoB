@@ -16,7 +16,7 @@ class GOBPreferences(bpy.types.AddonPreferences):
     # GoB 공유 폴더 경로
     gob_folder_path: StringProperty(
         name="GoB Folder",
-        description="GoB 공유 폴더 경로 (GoZ의 GoZProjects와 동일 역할)",
+        description="Path to the GoB shared folder for CLO ↔ Blender mesh exchange",
         default=core.DEFAULT_GOB_PATH,
         subtype='DIR_PATH',
     )
@@ -24,12 +24,28 @@ class GOBPreferences(bpy.types.AddonPreferences):
     # Export 포맷
     export_format: EnumProperty(
         name="Export Format",
-        description="CLO ↔ Blender 교환 시 사용할 3D 포맷",
+        description="3D format used for CLO ↔ Blender exchange",
         items=[
-            ('OBJ', "OBJ", "Wavefront OBJ (메시+UV, 가장 호환성 높음)"),
-            ('FBX', "FBX", "FBX (향후 지원 예정)"),
+            ('OBJ', "OBJ", "Wavefront OBJ (mesh + UV, best compatibility)"),
+            ('FBX', "FBX", "FBX (planned for future support)"),
         ],
         default='OBJ',
+    )
+    
+    # Send to CLO 버튼 표시 여부
+    show_send_to_clo: bpy.props.BoolProperty(
+        name="Enable 'Send to CLO' Button",
+        description="Show the 'Send to CLO' button in the main panel",
+        default=False,
+    )
+    
+    # 최대 유지 가능한 내보내기 폴더 수
+    max_folder_history: bpy.props.IntProperty(
+        name="Max Folder History",
+        description="Maximum number of export folders to keep in the GoB shared folder (oldest are auto-deleted)",
+        default=5,
+        min=1,
+        max=20,
     )
 
     def draw(self, context):
@@ -42,6 +58,14 @@ class GOBPreferences(bpy.types.AddonPreferences):
         box = layout.box()
         box.label(text="Exchange Format", icon='MESH_DATA')
         box.prop(self, "export_format")
+        
+        box = layout.box()
+        box.label(text="UI Options", icon='WINDOW')
+        box.prop(self, "show_send_to_clo")
+        
+        box = layout.box()
+        box.label(text="History Management", icon='TIME')
+        box.prop(self, "max_folder_history")
 
 
 classes = (

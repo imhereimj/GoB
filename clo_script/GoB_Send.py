@@ -44,47 +44,6 @@ def get_project_name():
     return "clo_export"
 
 
-def copy_to_gob(src_files, gob_folder):
-    """
-    Export 결과 파일들을 GoB 공유 폴더로 복사.
-    OBJ와 동일 폴더의 관련 파일(MTL, 텍스처 이미지)도 함께 복사.
-    Returns: GoB 폴더에 복사된 파일 경로 리스트.
-    """
-    copied = []
-    seen_dirs = set()
-
-    for src in src_files:
-        src_dir = os.path.dirname(src)
-
-        # 1) Export API가 반환한 파일 복사
-        dst = os.path.join(gob_folder, os.path.basename(src))
-        try:
-            shutil.copy2(src, dst)
-            copied.append(dst)
-            print(f"[GoB] COPY {os.path.basename(src)}")
-        except OSError as e:
-            print(f"[GoB] ERROR copy {os.path.basename(src)}: {e}")
-
-        # 2) 같은 폴더의 텍스처/MTL 파일도 함께 복사 (중복 방지)
-        if src_dir not in seen_dirs:
-            seen_dirs.add(src_dir)
-            tex_extensions = {".png", ".jpg", ".jpeg", ".tga", ".bmp", ".tiff", ".mtl"}
-            for filename in os.listdir(src_dir):
-                ext = os.path.splitext(filename)[1].lower()
-                if ext in tex_extensions:
-                    tex_src = os.path.join(src_dir, filename)
-                    tex_dst = os.path.join(gob_folder, filename)
-                    if tex_dst not in copied:
-                        try:
-                            shutil.copy2(tex_src, tex_dst)
-                            copied.append(tex_dst)
-                            print(f"[GoB] COPY {filename}")
-                        except OSError as e:
-                            print(f"[GoB] ERROR copy {filename}: {e}")
-
-    return copied
-
-
 def write_manifest(file_paths, gob_folder):
     """GoB_ObjectList.txt 작성 — Blender Auto-Import 트리거."""
     path = os.path.join(gob_folder, MANIFEST_FILE)
@@ -110,29 +69,46 @@ def main():
 
     os.makedirs(GOB_FOLDER, exist_ok=True)
 
-    # Export Dialog 표시 — 유저가 스케일/텍스처/UV 등 직접 설정
-    print("[GoB] INFO Opening Export Dialog...")
+    # 1. 고유 프로젝트 이름과 타임스탬프 추출
+    prj_name = get_project_name()
+    timestamp = datetime.now().strftime("%y%m%d_%H%M%S")
+    folder_name = f"GoB_{prj_name}_{timestamp}"
+    
+    # 2. 안전한 단독 격리 폴더 생성 (예: C:/Users/Public/GoB/GoB_MyShirt_260303_123456)
+    target_folder = os.path.join(GOB_FOLDER, folder_name)
+    os.makedirs(target_folder, exist_ok=True)
+    
+    # 3. Export될 파일의 타겟 경로 설정 (OBJ 파일명 지정)
+    target_filepath = os.path.join(target_folder, f"GoB_{prj_name}.obj")
+    target_filepath = target_filepath.replace("\\", "/")
+
+    # 4. Export Dialog 표시 — 이 경로가 기본값으로 팝업 창에 나타납니다.
+    print(f"[GoB] INFO Opening Export Dialog for: {target_filepath}")
     try:
-        result = export_api.ExportOBJ()
+        result = export_api.ExportOBJ(target_filepath)
     except Exception as e:
         print(f"[GoB] ERROR: {e}")
         return
 
     if not result:
         print("[GoB] INFO Export cancelled or failed")
+        # 취소 시 생성했던 빈 격리 폴더 청소
+        try:
+            if not os.listdir(target_folder):
+                os.rmdir(target_folder)
+        except:
+            pass
         return
 
-    print(f"[GoB] INFO Exported {len(result)} file(s)")
+    print(f"[GoB] INFO Exported {len(result)} file(s) safely to {folder_name}")
 
-    # Export 결과 파일(OBJ + MTL + 텍스처)을 GoB 폴더로 복사
-    copied = copy_to_gob(result, GOB_FOLDER)
-
-    # Manifest 작성 (OBJ만 기록)
-    objs = [f for f in copied if f.lower().endswith(".obj")]
+    # 5. Manifest 작성 (격리 폴더에 곧바로 저장되었으므로, 복사(Copy) 불필요)
+    # result 배열의 첫 번째 원소는 OBJ 경로를 담고 있습니다.
+    objs = [f for f in result if f.lower().endswith(".obj")]
     if objs:
         write_manifest(objs, GOB_FOLDER)
 
-    print(f"[GoB] === Done: {len(copied)} file(s) copied to GoB folder ===")
+    print(f"[GoB] === Done: {len(result)} file(s) saved ===")
 
 
 main()

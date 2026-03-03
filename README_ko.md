@@ -1,161 +1,50 @@
-# GoB — CLO ↔ Blender Bridge (v0.2.0 Beta)
+# GoB — CLO ↔ Blender Bridge (v0.2.1 Beta)
 
-**[English](README.md) | [日本語](README_jp.md)**
+⚡ Fast Bridge between CLO and Blender  
+🎨 Automatic PBR Shader Setup  
+📦 UDIM Support  
+🔄 Folder-Based Auto Import  
+🗂 Export Folder Auto Cleanup  
 
-> ⚠️ **Beta** — 현재 CLO → Blender 전송은 안정적이나, Blender → CLO는 초기 개발 단계입니다.
+> 🚧 **Beta** — 현재 적극적으로 개발 및 개선 중입니다.
 
 CLO에서 내보낸 3D 의상 데이터를 Blender로 빠르게 가져오는 브릿지 도구입니다.  
-텍스처(Diffuse, Normal, Roughness, Metalness, Opacity)를 자동으로 감지하여 Principled BSDF 셰이더에 연결하며, UDIM 텍스처도 지원합니다.
+텍스처(Diffuse, Normal, Roughness, Metalness, Opacity)를 자동 감지하여 Principled BSDF 셰이더에 연결하며, UDIM 텍스처를 지원합니다.
+
+---
 
 ## Status
 
-🚧 이 프로젝트는 현재 **Beta** 단계입니다.  
-실사용하면서 지속적으로 개선해 나갈 예정입니다.
-
-- ✅ CLO → Blender (OBJ + 텍스처 + UDIM)
-- ✅ 텍스처 파일명 기반 Auto-Shader 연결
-- ✅ 공유 폴더 자동 감시 (Auto-Import)
-- ✅ **macOS 지원 추가**
-- ⚠️ Blender → CLO: 공유 폴더로 OBJ 추출 지원 (CLO 자동 임포트는 추후 지원 예정)
-- 🔜 FBX 포맷 지원
-
-버그 리포트나 제안은 [Issues](../../issues)에 남겨주세요.
+- ✅ CLO → Blender (OBJ + MTL + Texture + UDIM)
+- ✅ 파일명 기반 Auto Shader
+- ✅ 공유 폴더 기반 Auto Import
+- ✅ Export 폴더 자동 정리
+- ✅ Debug Log 생성
+- ⚠️ Blender → CLO: OBJ Export만 지원
+- ⚠️ FBX: UI 존재 (기능 미완성)
 
 ---
 
-## 사전 준비
-
-GoB는 **공유 폴더**를 통해 CLO와 Blender 간 파일을 교환합니다.  
-첫 사용 전에 아래 폴더를 생성해 주세요:
-
-### Windows:
-```
-C:\Users\Public\GoB\
-```
-
-### macOS:
-```
-/Users/Shared/GoB/
-```
-
-> 💡 스크립트 실행 시 자동 생성되지만, 권한 문제 방지를 위해 미리 만들어 두는 것을 권장합니다.
-
----
-
-### 방법 1: ZIP 파일로 설치 (추천)
-
-1. [Releases](../../releases) 페이지에서 **`GoB_v0.2.0_Beta.zip`** (전체 패키지) 파일을 다운로드하여 압축을 풉니다.
-2. `blender_addon/` 폴더 내의 **`gob/` 폴더만 선택하여 다시 ZIP으로 압축**합니다. (예: `gob.zip`)
-3. Blender 실행 → **Edit → Preferences → Add-ons**
-4. 우측 상단의 **화살표/톱니바퀴 아이콘** (또는 Install 버튼) 클릭 → **Install from Disk...** 선택
-5. 방금 만든 `gob.zip` 파일을 선택하고 **Install** 클릭
-6. `GoB` 검색 → **GoB — CLO Bridge** 체크하여 활성화
-
-### 방법 2: 수동 설치 (폴더 복사)
-
-1. 압축을 푼 패키지의 `blender_addon/gob/` 폴더를 아래 경로에 복사합니다:
-   - **Windows**: `%APPDATA%\Blender Foundation\Blender\<버전>\scripts\addons\gob\`
-   - **macOS**: `~/Library/Application Support/Blender/<버전>/scripts/addons/gob/`
-2. Blender 실행 → **Edit → Preferences → Add-ons** → **GoB** 검색 후 활성화
-
----
-
-## 설치 — CLO Script
-
-### 방법 1: Script Editor에서 직접 실행
-
-1. `clo_script/GoB_Send.py` 파일을 원하는 위치에 저장
-2. CLO 실행 → **Script Editor** 열기
-3. `GoB_Send.py` 파일 열기
-4. 필요할 때마다 **Run** 버튼을 눌러 실행
-
-### 방법 2: Plug-in Manager에 등록 (추천)
-
-1. CLO 상단 메뉴 → **Plugins → Plug-in Manager** 클릭
-2. `GoB_Send.py` 파일을 플러그인으로 등록
-3. 등록 후 **Plugins → Plug-in** 메뉴에서 바로 실행 가능
-
-> 💡 Plug-in Manager에 등록하면 매번 Script Editor를 열 필요 없이 메뉴에서 한 클릭으로 실행할 수 있습니다.
-
----
-
-## 사용법
-
-### CLO → Blender
-
-1. CLO Script Editor에서 `GoB_Send.py` 실행
-2. **Export Dialog**가 표시됨 → 스케일, 텍스처, UV 등 원하는 설정 후 OK
-3. OBJ + MTL + 텍스처가 자동으로 **공유 폴더**(`C:/Users/Public/GoB/` 또는 `/Users/Shared/GoB/`)에 복사됨
-4. Blender → 3D Viewport → N키 사이드바 → **GoB** 탭 → **Get from CLO** 클릭
-
-### Auto-Import
-
-GoB 패널에서 **Auto-Import** 토글 → CLO에서 Export하면 자동으로 Blender에 Import됩니다.
-
----
-
-## 기능
-
-| 기능 | 설명 |
-|------|------|
-| Export Dialog | CLO 내장 Export UI에서 설정 커스텀 |
-| Auto-Shader | 텍스처 파일명 기반 Principled BSDF 자동 연결 |
-| UDIM 지원 | `name.1001.png` ~ `name.100N.png` 패턴 자동 감지 |
-| Auto-Import | 공유 폴더 자동 감시 + 자동 Import |
-
-## 텍스처 자동 감지 키워드
+## 텍스처 자동 감지 키워드 (현재 구현 기준)
 
 | 파일명 키워드 | Principled BSDF 소켓 |
-|:-------------|:--------------------|
-| `diffuse`, `basecolor`, `albedo` | Base Color |
-| `normal` | Normal (Normal Map 노드 자동 삽입) |
+|--------------|---------------------|
+| `diffuse` | Base Color |
+| `normal` | Normal |
 | `roughness` | Roughness |
-| `metalness`, `metallic` | Metallic |
-| `opacity`, `alpha` | Alpha |
+| `metalness` | Metallic |
+| `opacity` | Alpha |
 
 ---
-
-## 공유 폴더
-
-기본 경로:
-- **Windows**: `C:/Users/Public/GoB/`
-- **macOS**: `/Users/Shared/GoB/`
-
-> [!TIP]
-> 이 폴더에는 Export할 때마다 3D 데이터와 텍스처가 쌓이게 됩니다. 저장 공간 절약을 위해 **주기적으로 폴더 내부를 정리**해 주는 것을 권장합니다.
-
-경로를 변경하고 싶다면 **양쪽 모두** 맞춰줘야 합니다:
-
-| 측 | 변경 방법 |
-|---|----------|
-| **CLO** | `GoB_Send.py` 상단의 `GOB_FOLDER` 변수를 수정 |
-| **Blender** | GoB 패널 → **Settings** → **Folder** 에서 변경 |
 
 ## 요구사항
 
-- **Blender**: 5.0+ (Windows 확인), 4.5+ (macOS Intel 확인)
-- **CLO**: 2025+
-- **OS**: Windows / macOS
+- Blender 3.6+
+- CLO 2025+
+- Windows / macOS
 
-## 프로젝트 구조
-
-```
-GoB/
-├── blender_addon/
-│   └── gob/              ← Blender Add-on
-│       ├── __init__.py
-│       ├── core.py
-│       ├── operators.py
-│       ├── preferences.py
-│       ├── ui.py
-│       └── watcher.py
-│
-├── clo_script/
-│   └── GoB_Send.py        ← CLO Script Editor
-│
-└── README.md
-```
+---
 
 ## License
 
-[MIT License](LICENSE) © 2026 Jaeyong Lee
+MIT License © 2026 Jaeyong Lee

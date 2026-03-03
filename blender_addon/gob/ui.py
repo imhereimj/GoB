@@ -28,11 +28,11 @@ class GOB_PT_main_panel(bpy.types.Panel):
         box = layout.box()
         row = box.row()
         row.scale_y = 0.8
-        files = core.get_gob_files(gob_path)
-        if files:
-            row.label(text=f"GoB Folder: {len(files)} file(s)", icon='CHECKMARK')
+        folders = core.get_history_folders(gob_path)
+        if folders:
+            row.label(text=f"GoB History: {len(folders)} record(s)", icon='CHECKMARK')
         else:
-            row.label(text="GoB Folder: empty", icon='DOT')
+            row.label(text="GoB History: 0 records", icon='DOT')
 
         layout.separator()
 
@@ -44,12 +44,13 @@ class GOB_PT_main_panel(bpy.types.Panel):
         row.scale_y = 1.8
         row.operator("gob.import_from_clo", text="Get from CLO", icon='IMPORT')
 
-        col.separator()
-
-        # Blender → CLO
-        row = col.row(align=True)
-        row.scale_y = 1.8
-        row.operator("gob.send_to_clo", text="Send to CLO", icon='EXPORT')
+        if prefs.show_send_to_clo:
+            col.separator()
+    
+            # Blender → CLO
+            row = col.row(align=True)
+            row.scale_y = 1.8
+            row.operator("gob.send_to_clo", text="Send to CLO", icon='EXPORT')
 
         layout.separator()
 
@@ -84,6 +85,13 @@ class GOB_PT_settings_panel(bpy.types.Panel):
 
         layout.prop(prefs, "gob_folder_path", text="Folder")
         layout.prop(prefs, "export_format", text="Format")
+        layout.prop(prefs, "show_send_to_clo", text="Show 'Send to CLO'")
+        layout.prop(prefs, "max_folder_history", text="Max History")
+        
+        layout.separator()
+        row = layout.row()
+        row.alert = True
+        row.operator("gob.clear_all_history", text="⚠️ Delete All GoB Temp Data", icon='TRASH')
 
 
 classes = (
